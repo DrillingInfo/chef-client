@@ -22,17 +22,16 @@
 
 root_group = value_for_platform(
   ["openbsd", "freebsd", "mac_os_x", "mac_os_x_server"] => { "default" => "wheel" },
+  ["windows"] => { "default" => "Administrators" },
   "default" => "root"
 )
 
 chef_node_name = Chef::Config[:node_name] == node["fqdn"] ? false : Chef::Config[:node_name]
 log_path = case node["chef_client"]["log_file"]
-  when IO
-    node["chef_client"]["log_file"]
   when String
-    File.join(node["chef_client"]["log_dir"], node["chef_client"]["log_file"])
+    "'#{File.join(node["chef_client"]["log_dir"], node["chef_client"]["log_file"])}'"
   else
-    STDOUT
+    'STDOUT'
   end
 
 
@@ -44,7 +43,7 @@ log_path = case node["chef_client"]["log_file"]
       group "chef"
     else
       owner "root"
-     group root_group
+      group root_group
     end
     mode 0755
   end
